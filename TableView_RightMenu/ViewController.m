@@ -21,6 +21,7 @@
     
     //tableView必须放到一个ScrollView里作为容器
     NSScrollView *scroll = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    scroll.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;//放大缩小窗口时，tableview跟着动
 
     _table = [[NSTableView alloc] initWithFrame:NSMakeRect(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
 //    [_table setHeaderView:nil]; //隐藏header
