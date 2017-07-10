@@ -8,7 +8,10 @@
 
 #import "ViewController.h"
 
-@interface ViewController () <NSTabViewDelegate, NSTableViewDataSource>
+@interface ViewController () <NSTabViewDelegate, NSTableViewDataSource, NSMenuDelegate>
+
+@property (nonatomic, strong) NSTableView *table;
+@property (strong) NSMenu *rightClickMenu;
 
 @end
 
@@ -19,12 +22,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+
     //tableView必须放到一个ScrollView里作为容器
     NSScrollView *scroll = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     scroll.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;//放大缩小窗口时，tableview跟着动
 
     _table = [[NSTableView alloc] initWithFrame:NSMakeRect(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
 //    [_table setHeaderView:nil]; //隐藏header
+    _table.allowsMultipleSelection = YES;
     _table.delegate = self;
     _table.dataSource = self;
     [_table setUsesAlternatingRowBackgroundColors:NO];//是否用渐变效果
@@ -51,7 +56,71 @@
     
     [scroll setDocumentView:_table];
     [self.view addSubview:scroll];
+    
+    //初始化右键菜单
+    {
+        self.rightClickMenu = [[NSMenu alloc] init];
+        self.rightClickMenu.delegate = self;
+        NSMenuItem *item1 = [[NSMenuItem alloc] initWithTitle:@"播放" action:@selector(playMusic:) keyEquivalent:@""];
+        NSMenuItem *item2 = [[NSMenuItem alloc] initWithTitle:@"删除" action:@selector(deleteMusic:) keyEquivalent:@""];
+        NSMenuItem *item3 = [[NSMenuItem alloc] initWithTitle:@"下一首" action:@selector(playNextMusic:) keyEquivalent:@""];
+        [item1 setTarget:self];
+        [item2 setTarget:self];
+        [item3 setTarget:self];
+        [self.rightClickMenu addItem:item1];
+        [self.rightClickMenu addItem:[NSMenuItem separatorItem]];
+        [self.rightClickMenu addItem:item2];
+        [self.rightClickMenu addItem:[NSMenuItem separatorItem]];
+        [self.rightClickMenu addItem:item3];
+        _table.menu = self.rightClickMenu;
+    }
 }
+
+#pragma mark - Events
+- (void)playMusic:(id)sender
+{
+    NSLog(@"---播放---");
+}
+
+- (void)deleteMusic:(id)sender
+{
+    NSLog(@"---删除---");
+}
+
+- (void)playNextMusic:(id)sender
+{
+    NSLog(@"---下一首---");
+}
+
+- (void)playPreviousMusic:(id)sender
+{
+    NSLog(@"---上一首---");
+}
+
+
+#pragma mark - NSMenu相关
+
+//决定菜单是否可用（置灰），每次右键都会调用，有几个 item 就调用几次
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    NSLog(@"%s", __FUNCTION__);
+    if (menuItem.action == @selector(playMusic:))
+    {
+        NSLog(@"numberOfSelectedRows ----- %ld", _table.numberOfSelectedRows);
+        if (_table.numberOfSelectedRows > 1) {
+            menuItem.title = @"播放所有歌曲";
+        }
+        else {
+            menuItem.title = @"播放歌曲";
+        }
+        return YES;
+    }
+    else if ([menuItem.title isEqualToString:@"删除"]) {
+        return NO;
+    }
+    return YES;
+}
+
 
 #pragma mark - NSTableViewDelegate & NSTableViewDataSource
 

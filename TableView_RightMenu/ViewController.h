@@ -8,9 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface ViewController : NSViewController <NSTableViewDelegate>
-
-@property (nonatomic, strong) NSTableView *table;
+@interface ViewController : NSViewController
 
 
 @end

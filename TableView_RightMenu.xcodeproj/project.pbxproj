@@ -550,6 +550,7 @@
 				3536E4601F0A1953004A9D6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		35A7ED1A1EE678DE00571038 /* Build configuration list for PBXNativeTarget "DropToSort" */ = {
 			isa = XCConfigurationList;
